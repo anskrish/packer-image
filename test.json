@@ -1,0 +1,39 @@
+{
+	"variables": {
+		"ami_name": "Trend-ftp-server-{{timestamp}}",
+		"environment": "any"
+	},
+	"builders": [
+		{
+			"type": "amazon-ebs",
+			"ami_name": "{{user `ami_name`}}",
+			"instance_type": "t2.micro",
+			"source_ami": "ami-07d0cf3af28718ef8",
+			"region": "us-east-1",
+			"launch_block_device_mappings": [
+				{
+					"delete_on_termination": true,
+					"device_name": "/dev/sda1",
+					"volume_size": 10,
+					"volume_type": "gp2"
+				}
+			],
+			"ssh_username": "ubuntu",
+			"tags": {
+				"name": "{{user `ami_name`}}",
+				"base-ami": "ubuntu:16.04"
+			}
+		}
+	],
+	"provisioners": [
+		{
+			"type": "shell",
+			"inline": [
+				"sudo apt-get update",
+				"sudo apt-get install -y apache2",
+				"sudo service apache2 start"
+			],
+			"execute_command": "sudo touch /tmp/raju"
+		}
+	]
+}
